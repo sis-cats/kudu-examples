@@ -8,7 +8,7 @@ dir_resolve()
   echo "`pwd -P`"
 }
 
-: ${VIRTUALBOX_NAME:=cloudera-quickstart-vm-5.4.9-kudu-virtualbox}
+: ${VIRTUALBOX_NAME:=cloudera-quickstart-vm-5.8.0-kudu-virtualbox}
 : ${VIRTUALBOX_URL:=http://cloudera-kudu-beta.s3.amazonaws.com/${VIRTUALBOX_NAME}.ova}
 
 # VM Settings default.
@@ -58,6 +58,10 @@ if ! VBoxManage list vms | grep -q '"kudu-demo"'; then
   SHARED_FOLDER_PATH=`dir_resolve $REL_PATH`
   VBoxManage sharedfolder add ${VM_NAME} --name examples --hostpath $SHARED_FOLDER_PATH --automount
 fi
+
+# Enable SSE4 pass-through.
+VBoxManage setextradata ${VM_NAME} VBoxInternal/CPUM/SSE4.1 1
+VBoxManage setextradata ${VM_NAME} VBoxInternal/CPUM/SSE4.2 1
 
 # Start the VM
 VBoxManage startvm ${VM_NAME}

@@ -1,9 +1,9 @@
 package org.kududb.examples.sample;
 
-import org.kududb.ColumnSchema;
-import org.kududb.Schema;
-import org.kududb.Type;
-import org.kududb.client.*;
+import org.apache.kudu.ColumnSchema;
+import org.apache.kudu.Schema;
+import org.apache.kudu.Type;
+import org.apache.kudu.client.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,12 @@ public class Sample {
           .build());
       columns.add(new ColumnSchema.ColumnSchemaBuilder("value", Type.STRING)
           .build());
+      List<String> rangeKeys = new ArrayList<>();
+      rangeKeys.add("key");
+
       Schema schema = new Schema(columns);
-      client.createTable(tableName, schema);
+      client.createTable(tableName, schema,
+                         new CreateTableOptions().setRangePartitionColumns(rangeKeys));
 
       KuduTable table = client.openTable(tableName);
       KuduSession session = client.newSession();
